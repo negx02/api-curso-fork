@@ -1,0 +1,23 @@
+{
+  "name": "api-curso",
+  "version": "1.0.0",
+  "description": "Esta es una API de ejemplo para un curso.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "keywords": [
+    "node",
+    "api",
+    "curso",
+    "mysql"
+  ],
+  "author": "Aaron Leon",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "express": "5.1.0"
+  }
+}
