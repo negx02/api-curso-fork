@@ -3,23 +3,39 @@ import dotenv from "dotenv";
 import cookie from "cookie-parser";
 import cors from "cors";
 import { corsOptions } from "./config/cors.js";
+import rateLimit from "express-rate-limit";
+
 // Rutas
 import authRoutes from "./modules/auth/auth.routes.js";
-import userRoutes from "./modules/users/user.routes.js";    
+import userRoutes from "./modules/users/user.routes.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.disable("x-powered-by")
-app.use(express.json());    
-app.use(cookie());    
+app.disable("x-powered-by");
+app.use(express.json());
+app.use(cookie());
 app.use(cors(corsOptions));
 
-app.use(authRoutes); // Rutas de autenticación
-app.use(userRoutes); // Rutas de usuarios   
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // 100 requests por IP
+  message: "Demasiadas peticiones, intenta de nuevo más tarde",
+});
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // Solo 5 intentos de login
+  message: "Demasiados intentos de inicio de sesión, intenta en 15 minutos",
+  skipSuccessfulRequests: true, // No cuenta requests exitosos
+});
+
+app.use(authRoutes, authLimiter); // Rutas de autenticación
+app.use(userRoutes); // Rutas de usuarios
+
+app.use(generalLimiter);
 
 app.use((err, req, res, next) => {
   console.error("🔥 Server Error:", err);
@@ -32,5 +48,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en el puerto: ${PORT}`);
 });
-
- 
