@@ -32,12 +32,19 @@ CREATE TABLE pokemons(
     icon VARCHAR(255) NOT NULL,
     image VARCHAR(255) NOT NULL,
     id_user INT NOT NULL,
+    slug VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE 
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+    UNIQUE KEY unique_slug_per_user (id_user, slug)
 );
 
-ALTER TABLE pokemons ADD COLUMN slug VARCHAR(255) UNIQUE NOT NULL;
+
+
+-- si la tabla ya existe
+ALTER TABLE pokemons
+ADD UNIQUE unique_slug_per_user (id_user, slug);
+
 
 INSERT INTO pokemons (name, type, icon, image, id_user, slug) VALUES
 ('Pikachu', 'Electric', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/25.png', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png', 5, 'pikachu'),
